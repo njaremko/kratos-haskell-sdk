@@ -14,7 +14,6 @@
 -fno-warn-unused-binds -fno-warn-unused-imports -freduction-depth=328 #-}
 
 module OryKratos.API
-  -- * Client and Server
   ( Config(..)
   , OryKratosBackend(..)
   , createOryKratosClient
