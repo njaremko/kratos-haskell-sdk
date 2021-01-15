@@ -125,13 +125,6 @@ type OryKratosAPI
     :<|> "recovery" :> "link" :> ReqBody '[JSON] CreateRecoveryLink :> Verb 'POST 200 '[JSON] RecoveryLink -- 'createRecoveryLink' route
     :<|> "identities" :> Capture "id" Text :> Verb 'DELETE 200 '[JSON] () -- 'deleteIdentity' route
     :<|> "identities" :> Capture "id" Text :> Verb 'GET 200 '[JSON] Identity -- 'getIdentity' route
-    :<|> "schemas" :> Capture "id" Text :> Verb 'GET 200 '[JSON] Value -- 'getSchema' route
-    :<|> "self-service" :> "errors" :> QueryParam "error" Text :> Verb 'GET 200 '[JSON] ErrorContainer -- 'getSelfServiceError' route
-    :<|> "self-service" :> "login" :> "flows" :> QueryParam "id" Text :> Verb 'GET 200 '[JSON] LoginFlow -- 'getSelfServiceLoginFlow' route
-    :<|> "self-service" :> "recovery" :> "flows" :> QueryParam "id" Text :> Verb 'GET 200 '[JSON] RecoveryFlow -- 'getSelfServiceRecoveryFlow' route
-    :<|> "self-service" :> "registration" :> "flows" :> QueryParam "id" Text :> Verb 'GET 200 '[JSON] RegistrationFlow -- 'getSelfServiceRegistrationFlow' route
-    :<|> "self-service" :> "settings" :> "flows" :> QueryParam "id" Text :> Verb 'GET 200 '[JSON] SettingsFlow -- 'getSelfServiceSettingsFlow' route
-    :<|> "self-service" :> "verification" :> "flows" :> QueryParam "id" Text :> Verb 'GET 200 '[JSON] VerificationFlow -- 'getSelfServiceVerificationFlow' route
     :<|> "identities" :> QueryParam "per_page" Integer :> QueryParam "page" Integer :> Verb 'GET 200 '[JSON] [Identity] -- 'listIdentities' route
     :<|> "metrics" :> "prometheus" :> Verb 'GET 200 '[JSON] () -- 'prometheus' route
     :<|> "identities" :> Capture "id" Text :> ReqBody '[JSON] UpdateIdentity :> Verb 'PUT 200 '[JSON] Identity -- 'updateIdentity' route
@@ -189,13 +182,6 @@ data OryKratosBackend m = OryKratosBackend
   , createRecoveryLink :: CreateRecoveryLink -> m RecoveryLink{- ^ This endpoint creates a recovery link which should be given to the user in order for them to recover (or activate) their account. -}
   , deleteIdentity :: Text -> m (){- ^ Calling this endpoint irrecoverably and permanently deletes the identity given its ID. This action can not be undone. This endpoint returns 204 when the identity was deleted or when the identity was not found, in which case it is assumed that is has been deleted already.  Learn how identities work in [ORY Kratos' User And Identity Model Documentation](https://www.ory.sh/docs/next/kratos/concepts/identity-user-model). -}
   , getIdentity :: Text -> m Identity{- ^ Learn how identities work in [ORY Kratos' User And Identity Model Documentation](https://www.ory.sh/docs/next/kratos/concepts/identity-user-model). -}
-  , getSchema :: Text -> m Value{- ^ Get a Traits Schema Definition -}
-  , getSelfServiceError :: Maybe Text -> m ErrorContainer{- ^ This endpoint returns the error associated with a user-facing self service errors.  This endpoint supports stub values to help you implement the error UI:  `?error=stub:500` - returns a stub 500 (Internal Server Error) error.  More information can be found at [ORY Kratos User User Facing Error Documentation](https://www.ory.sh/docs/kratos/self-service/flows/user-facing-errors). -}
-  , getSelfServiceLoginFlow :: Maybe Text -> m LoginFlow{- ^ This endpoint returns a login flow's context with, for example, error details and other information.  More information can be found at [ORY Kratos User Login and User Registration Documentation](https://www.ory.sh/docs/next/kratos/self-service/flows/user-login-user-registration). -}
-  , getSelfServiceRecoveryFlow :: Maybe Text -> m RecoveryFlow{- ^ This endpoint returns a recovery flow's context with, for example, error details and other information.  More information can be found at [ORY Kratos Account Recovery Documentation](../self-service/flows/account-recovery.mdx). -}
-  , getSelfServiceRegistrationFlow :: Maybe Text -> m RegistrationFlow{- ^ This endpoint returns a registration flow's context with, for example, error details and other information.  More information can be found at [ORY Kratos User Login and User Registration Documentation](https://www.ory.sh/docs/next/kratos/self-service/flows/user-login-user-registration). -}
-  , getSelfServiceSettingsFlow :: Maybe Text -> m SettingsFlow{- ^ When accessing this endpoint through ORY Kratos' Public API you must ensure that either the ORY Kratos Session Cookie or the ORY Kratos Session Token are set. The public endpoint does not return 404 status codes but instead 403 or 500 to improve data privacy.  You can access this endpoint without credentials when using ORY Kratos' Admin API.  More information can be found at [ORY Kratos User Settings & Profile Management Documentation](../self-service/flows/user-settings). -}
-  , getSelfServiceVerificationFlow :: Maybe Text -> m VerificationFlow{- ^ This endpoint returns a verification flow's context with, for example, error details and other information.  More information can be found at [ORY Kratos Email and Phone Verification Documentation](https://www.ory.sh/docs/kratos/selfservice/flows/verify-email-account-activation). -}
   , listIdentities :: Maybe Integer -> Maybe Integer -> m [Identity]{- ^ Lists all identities. Does not support search at the moment.  Learn how identities work in [ORY Kratos' User And Identity Model Documentation](https://www.ory.sh/docs/next/kratos/concepts/identity-user-model). -}
   , prometheus :: m (){- ^ ``` metadata: annotations: prometheus.io/port: \"4434\" prometheus.io/path: \"/metrics/prometheus\" ``` -}
   , updateIdentity :: Text -> UpdateIdentity -> m Identity{- ^ This endpoint updates an identity. It is NOT possible to set an identity's credentials (password, ...) using this method! A way to achieve that will be introduced in the future.  The full identity payload (except credentials) is expected. This endpoint does not support patching.  Learn how identities work in [ORY Kratos' User And Identity Model Documentation](https://www.ory.sh/docs/next/kratos/concepts/identity-user-model). -}
@@ -256,13 +242,6 @@ createOryKratosClient = OryKratosBackend{..}
      (coerce -> createRecoveryLink) :<|>
      (coerce -> deleteIdentity) :<|>
      (coerce -> getIdentity) :<|>
-     (coerce -> getSchema) :<|>
-     (coerce -> getSelfServiceError) :<|>
-     (coerce -> getSelfServiceLoginFlow) :<|>
-     (coerce -> getSelfServiceRecoveryFlow) :<|>
-     (coerce -> getSelfServiceRegistrationFlow) :<|>
-     (coerce -> getSelfServiceSettingsFlow) :<|>
-     (coerce -> getSelfServiceVerificationFlow) :<|>
      (coerce -> listIdentities) :<|>
      (coerce -> prometheus) :<|>
      (coerce -> updateIdentity) :<|>
@@ -347,13 +326,6 @@ runOryKratosMiddlewareServer Config{..} middleware backend = do
        coerce createRecoveryLink :<|>
        coerce deleteIdentity :<|>
        coerce getIdentity :<|>
-       coerce getSchema :<|>
-       coerce getSelfServiceError :<|>
-       coerce getSelfServiceLoginFlow :<|>
-       coerce getSelfServiceRecoveryFlow :<|>
-       coerce getSelfServiceRegistrationFlow :<|>
-       coerce getSelfServiceSettingsFlow :<|>
-       coerce getSelfServiceVerificationFlow :<|>
        coerce listIdentities :<|>
        coerce prometheus :<|>
        coerce updateIdentity :<|>
