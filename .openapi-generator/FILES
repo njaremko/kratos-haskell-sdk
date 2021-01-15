@@ -1,0 +1,7 @@
+.openapi-generator-ignore
+README.md
+Setup.hs
+lib/OryKratos/API.hs
+lib/OryKratos/Types.hs
+ory-kratos.cabal
+stack.yaml
